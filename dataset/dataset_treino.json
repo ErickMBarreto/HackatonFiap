@@ -1,0 +1,1685 @@
+[
+  {
+    "image_filename": "aws1.png",
+    "ground_truth_json": {
+      "architecture_title": "Manufacturing Quality Inspection with AWS ML",
+      "cloud_provider": "AWS",
+      "components": [
+        {
+          "id": "shop_floor_devices",
+          "name": "Shop Floor Devices (X-ray machines, cameras, devices)",
+          "type": "External",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "A malicious device could impersonate a legitimate shop floor device to inject false data into the system.",
+              "mitigation": "Implement strong device authentication using X.509 certificates or secure hardware modules for each device."
+            }
+          ]
+        },
+        {
+          "id": "mes_system",
+          "name": "MES System",
+          "type": "External",
+          "stride_analysis": [
+            {
+              "category": "Tampering",
+              "threat": "Data sent from the cloud back to the MES system could be maliciously altered, leading to incorrect operational decisions.",
+              "mitigation": "Ensure all communication channels with the MES system use TLS 1.2+ and implement data integrity checks (e.g., digital signatures)."
+            }
+          ]
+        },
+        {
+          "id": "aws_transfer_family",
+          "name": "AWS Transfer Family",
+          "type": "Network",
+          "stride_analysis": [
+            {
+              "category": "Information Disclosure",
+              "threat": "Unauthorized users could gain access to sensitive image data during transfer to AWS Cloud.",
+              "mitigation": "Enforce strong IAM authentication for users accessing Transfer Family endpoints and ensure encryption in transit (SFTP/FTPS over TLS)."
+            }
+          ]
+        },
+        {
+          "id": "aws_datasync",
+          "name": "AWS DataSync",
+          "type": "Storage",
+          "stride_analysis": [
+            {
+              "category": "Tampering",
+              "threat": "Data being synchronized from on-premises to S3 could be altered during the transfer process.",
+              "mitigation": "Utilize DataSync's built-in data integrity validation and ensure end-to-end encryption for all transfers."
+            }
+          ]
+        },
+        {
+          "id": "aws_iot_greengrass",
+          "name": "AWS IoT Greengrass",
+          "type": "Compute",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "A compromised Greengrass core device could impersonate a legitimate device or the cloud to send false data or commands.",
+              "mitigation": "Implement mutual authentication using X.509 certificates for Greengrass core devices and enforce secure boot mechanisms."
+            }
+          ]
+        },
+        {
+          "id": "s3_images_dataset",
+          "name": "Amazon S3 (images dataset)",
+          "type": "Storage",
+          "stride_analysis": [
+            {
+              "category": "Information Disclosure",
+              "threat": "Unauthorized access to the S3 bucket containing sensitive image datasets.",
+              "mitigation": "Apply strict S3 bucket policies, IAM policies with least privilege, enable encryption at rest (SSE-KMS), and restrict network access via VPC Endpoints."
+            }
+          ]
+        },
+        {
+          "id": "amazon_lookout_for_vision",
+          "name": "Amazon Lookout for Vision",
+          "type": "Compute",
+          "stride_analysis": [
+            {
+              "category": "Tampering",
+              "threat": "Malicious or corrupted input data could lead to a poisoned machine learning model, resulting in incorrect defect detection.",
+              "mitigation": "Implement robust data validation and sanitization processes for all training data before it's fed into Lookout for Vision."
+            }
+          ]
+        },
+        {
+          "id": "lambda_manage_model",
+          "name": "AWS Lambda (manage model)",
+          "type": "Compute",
+          "stride_analysis": [
+            {
+              "category": "Elevation of Privilege",
+              "threat": "The Lambda function's IAM role might have excessive permissions, allowing it to perform unauthorized actions beyond model management.",
+              "mitigation": "Configure the Lambda execution role with the principle of least privilege, granting only the necessary permissions for model management."
+            }
+          ]
+        },
+        {
+          "id": "amazon_api_gateway",
+          "name": "Amazon API Gateway",
+          "type": "Network",
+          "stride_analysis": [
+            {
+              "category": "Denial of Service",
+              "threat": "The API endpoint could be overwhelmed by a high volume of requests, making it unavailable to legitimate users.",
+              "mitigation": "Implement API Gateway throttling limits, integrate with AWS WAF for DDoS protection, and use API keys for usage plans."
+            }
+          ]
+        },
+        {
+          "id": "aws_step_functions_workflow",
+          "name": "AWS Step Functions workflow",
+          "type": "Compute",
+          "stride_analysis": [
+            {
+              "category": "Repudiation",
+              "threat": "Inability to prove who initiated or approved a specific state transition within the inference workflow.",
+              "mitigation": "Enable AWS CloudTrail logging for Step Functions API calls and ensure detailed execution history is retained for auditing."
+            }
+          ]
+        },
+        {
+          "id": "lambda_inference_function",
+          "name": "AWS Lambda (inference function)",
+          "type": "Compute",
+          "stride_analysis": [
+            {
+              "category": "Information Disclosure",
+              "threat": "Sensitive inference results could be exposed if not handled securely within the Lambda function or its logs.",
+              "mitigation": "Ensure sensitive data is redacted from logs, encrypt output data, and restrict access to the destinations where inference results are stored."
+            }
+          ]
+        },
+        {
+          "id": "lambda_publish_to_sns",
+          "name": "AWS Lambda (publish to SNS)",
+          "type": "Compute",
+          "stride_analysis": [
+            {
+              "category": "Elevation of Privilege",
+              "threat": "The Lambda function's IAM role might have permissions to publish to unauthorized SNS topics or perform other SNS actions.",
+              "mitigation": "Grant the Lambda function's IAM role only `sns:Publish` permissions to specific, authorized SNS topics."
+            }
+          ]
+        },
+        {
+          "id": "lambda_publish_to_s3",
+          "name": "AWS Lambda (publish to S3)",
+          "type": "Compute",
+          "stride_analysis": [
+            {
+              "category": "Tampering",
+              "threat": "Malicious modification of inference results before they are published to S3.",
+              "mitigation": "Implement data integrity checks within the Lambda function and ensure the S3 bucket has versioning enabled to recover from unauthorized changes."
+            }
+          ]
+        },
+        {
+          "id": "lambda_start_state_machine_submit_batch_job",
+          "name": "AWS Lambda (start state machine, submit batch job)",
+          "type": "Compute",
+          "stride_analysis": [
+            {
+              "category": "Elevation of Privilege",
+              "threat": "The Lambda function's IAM role could have excessive permissions, allowing it to start unauthorized Step Functions or submit arbitrary Batch jobs.",
+              "mitigation": "Apply the principle of least privilege to the Lambda execution role, restricting it to only start specific Step Functions and submit jobs to designated Batch queues."
+            }
+          ]
+        },
+        {
+          "id": "aws_batch",
+          "name": "AWS Batch",
+          "type": "Compute",
+          "stride_analysis": [
+            {
+              "category": "Denial of Service",
+              "threat": "Malicious or misconfigured Batch jobs could consume all available compute resources, preventing legitimate jobs from running.",
+              "mitigation": "Implement job queues with priority, set resource quotas for compute environments, and monitor job execution for anomalies."
+            }
+          ]
+        },
+        {
+          "id": "aws_fargate",
+          "name": "AWS Fargate",
+          "type": "Compute",
+          "stride_analysis": [
+            {
+              "category": "Elevation of Privilege",
+              "threat": "A compromised container running on Fargate could attempt to escape its boundaries or gain unauthorized permissions.",
+              "mitigation": "Run containers with the least necessary privileges, use secure base images, and regularly scan container images for vulnerabilities."
+            }
+          ]
+        },
+        {
+          "id": "amazon_sns",
+          "name": "Amazon SNS",
+          "type": "Network",
+          "stride_analysis": [
+            {
+              "category": "Information Disclosure",
+              "threat": "Sensitive messages published to SNS could be delivered to unauthorized subscribers.",
+              "mitigation": "Apply strict access policies to SNS topics, encrypt messages at rest (SSE) and in transit (TLS), and carefully manage subscription permissions."
+            }
+          ]
+        },
+        {
+          "id": "s3_inference_results",
+          "name": "Amazon S3 (inference results)",
+          "type": "Storage",
+          "stride_analysis": [
+            {
+              "category": "Tampering",
+              "threat": "Unauthorized modification or deletion of critical inference results stored in S3.",
+              "mitigation": "Enable S3 Object Lock for WORM (Write Once Read Many) protection, enforce MFA Delete, and use strong IAM policies to restrict write access."
+            }
+          ]
+        },
+        {
+          "id": "amazon_quicksight",
+          "name": "Amazon QuickSight",
+          "type": "Database",
+          "stride_analysis": [
+            {
+              "category": "Information Disclosure",
+              "threat": "Unauthorized business users could access sensitive dashboards or underlying data in QuickSight.",
+              "mitigation": "Implement QuickSight's robust user and group permissions, row-level security, and column-level security to restrict data visibility."
+            }
+          ]
+        },
+        {
+          "id": "lambda_write_back_to_mes",
+          "name": "AWS Lambda (write back to MES)",
+          "type": "Compute",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "The Lambda function could be compromised and impersonate an authorized entity to send false data or commands to the MES system.",
+              "mitigation": "Securely manage credentials for MES system access using AWS Secrets Manager and implement mutual authentication if the MES system supports it."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "image_filename": "azure2.png",
+    "ground_truth_json": {
+      "architecture_title": "Azure Virtual WAN Hub-Spoke Deployment via Bicep",
+      "cloud_provider": "Azure",
+      "components": [
+        {
+          "id": "bicep_deployment_orchestration",
+          "name": "Azure Bicep Deployment Orchestration",
+          "type": "External",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Um ator malicioso pode tentar se passar pelo processo de orquestração de deployment para executar operações não autorizadas.",
+              "mitigation": "Implementar autenticação multifator (MFA) e controle de acesso baseado em função (RBAC) para as identidades que podem iniciar deployments. Usar identidades gerenciadas para pipelines de CI/CD."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Parâmetros de deployment ou o comando de execução podem ser alterados maliciosamente antes ou durante a execução.",
+              "mitigation": "Proteger o ambiente de execução do deployment (ex: máquinas de build, agentes de pipeline) e usar variáveis de ambiente seguras para parâmetros sensíveis. Assinar digitalmente os templates Bicep."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "Não há um registro claro de quem iniciou um deployment ou quais parâmetros foram usados, dificultando a auditoria.",
+              "mitigation": "Garantir logs de auditoria detalhados para todas as operações de deployment, incluindo o usuário/identidade que iniciou e os parâmetros utilizados. Integrar com Azure Monitor e Log Analytics."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Informações sensíveis (ex: chaves, senhas) podem ser expostas nos logs de deployment ou nos parâmetros passados.",
+              "mitigation": "Evitar hardcoding de segredos nos templates Bicep. Usar Azure Key Vault para armazenar segredos e referenciá-los durante o deployment. Criptografar logs de deployment."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Um ataque pode sobrecarregar o Azure Resource Manager ou consumir cotas de recursos, impedindo deployments legítimos.",
+              "mitigation": "Implementar políticas de limitação de taxa (rate limiting) e monitoramento de cotas. Usar Azure Policy para impor limites de recursos."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "A identidade usada para o deployment pode ter permissões excessivas, permitindo a criação ou modificação de recursos além do escopo pretendido.",
+              "mitigation": "Aplicar o princípio do menor privilégio (least privilege) para a identidade de deployment. Usar RBAC para conceder apenas as permissões necessárias para os recursos específicos."
+            }
+          ]
+        },
+        {
+          "id": "bicep_templates_and_scripts",
+          "name": "Azure Bicep Templates e Scripts (orchestration.bicep, vnet.bicep, Invoke-AzResourceStateCheck.ps1)",
+          "type": "External",
+          "stride_analysis": [
+            {
+              "category": "Tampering",
+              "threat": "Templates Bicep ou scripts PowerShell podem ser modificados maliciosamente para implantar recursos não autorizados ou com configurações inseguras.",
+              "mitigation": "Armazenar templates e scripts em um sistema de controle de versão (ex: Git) com revisão de código obrigatória e proteção de branch. Implementar varredura de segurança de código (SAST)."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Segredos ou informações sensíveis podem ser acidentalmente incluídos nos templates ou scripts.",
+              "mitigation": "Revisões de código rigorosas para evitar segredos hardcoded. Usar Azure Key Vault para gerenciar segredos e referenciá-los dinamicamente."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "Não é possível determinar quem fez uma alteração específica nos templates ou scripts.",
+              "mitigation": "Usar um sistema de controle de versão com histórico de commits e assinaturas digitais para garantir a rastreabilidade das alterações."
+            }
+          ]
+        },
+        {
+          "id": "azure_subscription",
+          "name": "Azure Subscription",
+          "type": "Identity",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Um ator não autorizado pode obter acesso às credenciais de um administrador da assinatura e se passar por ele.",
+              "mitigation": "Implementar MFA para todas as contas administrativas. Usar Azure AD Conditional Access. Monitorar atividades de login suspeitas."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Um usuário com permissões limitadas pode encontrar uma vulnerabilidade para escalar seus privilégios para o nível de assinatura.",
+              "mitigation": "Aplicar o princípio do menor privilégio. Revisar regularmente as atribuições de RBAC. Usar Azure PIM (Privileged Identity Management) para acesso just-in-time."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Um ataque pode esgotar as cotas de recursos da assinatura ou impor políticas que bloqueiam operações legítimas.",
+              "mitigation": "Monitorar o uso de cotas e configurar alertas. Implementar Azure Policy para governança e conformidade, mas com cuidado para não bloquear operações essenciais."
+            }
+          ]
+        },
+        {
+          "id": "azure_resource_group",
+          "name": "Azure Resource Group",
+          "type": "Identity",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Um ator não autorizado pode se passar por um usuário ou serviço com permissões para gerenciar o grupo de recursos.",
+              "mitigation": "Aplicar RBAC granular no nível do grupo de recursos. Monitorar logs de atividade para detecção de acesso não autorizado."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Recursos dentro do grupo podem ser modificados ou excluídos por um ator não autorizado.",
+              "mitigation": "Implementar bloqueios de recursos (Resource Locks) para proteger recursos críticos contra exclusão ou modificação acidental/maliciosa. Usar Azure Policy para impor configurações."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Um usuário com permissões em um recurso pode escalar para controlar todo o grupo de recursos.",
+              "mitigation": "Revisar atribuições de RBAC e evitar permissões curinga. Usar Azure PIM para acesso privilegiado temporário."
+            }
+          ]
+        },
+        {
+          "id": "azure_virtual_wan",
+          "name": "Azure Virtual WAN",
+          "type": "Network",
+          "stride_analysis": [
+            {
+              "category": "Tampering",
+              "threat": "Configurações da Virtual WAN (ex: rotas, conexões) podem ser alteradas por um ator não autorizado, impactando a conectividade global.",
+              "mitigation": "Proteger o acesso à configuração da Virtual WAN com RBAC estrito. Monitorar logs de atividade para alterações de configuração."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Uma configuração incorreta ou ataque pode interromper a conectividade de rede para todos os spokes conectados.",
+              "mitigation": "Implementar validação de configuração via Bicep. Monitorar a saúde da rede e a conectividade com Azure Network Watcher. Ter planos de rollback para configurações."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Informações sobre a topologia da rede global ou detalhes de roteamento podem ser expostos.",
+              "mitigation": "Restringir o acesso a logs de rede e configurações. Usar Azure Private Link para serviços de gerenciamento quando aplicável."
+            }
+          ]
+        },
+        {
+          "id": "azure_virtual_hub",
+          "name": "Azure Virtual Hub",
+          "type": "Network",
+          "stride_analysis": [
+            {
+              "category": "Tampering",
+              "threat": "As configurações do Virtual Hub (ex: tabelas de roteamento, configurações de segurança) podem ser modificadas maliciosamente.",
+              "mitigation": "Aplicar RBAC granular para o Virtual Hub. Usar Azure Policy para impor configurações de segurança e roteamento."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Uma configuração incorreta ou ataque ao Virtual Hub pode interromper o tráfego entre as VNets spoke e para recursos externos.",
+              "mitigation": "Implementar redundância e alta disponibilidade quando possível. Monitorar o desempenho e a saúde do hub. Testar planos de recuperação de desastres."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Detalhes de roteamento interno ou informações de tráfego podem ser expostos se o hub for comprometido.",
+              "mitigation": "Restringir o acesso a logs de fluxo de rede e configurações do hub. Usar criptografia de tráfego onde aplicável."
+            }
+          ]
+        },
+        {
+          "id": "azure_virtual_network_spoke",
+          "name": "Azure Virtual Network (Spoke)",
+          "type": "Network",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Um recurso comprometido dentro de uma VNet pode tentar se passar por outro recurso legítimo na mesma VNet ou em uma VNet diferente.",
+              "mitigation": "Implementar Network Security Groups (NSGs) e Azure Firewall para segmentação de rede e controle de tráfego. Usar autenticação mútua para comunicação entre serviços."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Configurações de VNet/Subnet (ex: NSGs, UDRs) podem ser alteradas, permitindo tráfego não autorizado ou bloqueando tráfego legítimo.",
+              "mitigation": "Proteger o acesso à configuração da VNet com RBAC. Usar Azure Policy para impor configurações de segurança de rede."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Tráfego de rede dentro da VNet pode ser interceptado ou logs de fluxo de rede podem expor informações sensíveis.",
+              "mitigation": "Criptografar o tráfego entre VMs/serviços (ex: TLS). Usar Azure Private Link para acessar serviços PaaS. Monitorar logs de fluxo de NSG."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Um ataque pode sobrecarregar recursos dentro da VNet ou uma configuração de NSG/UDR incorreta pode bloquear o tráfego essencial.",
+              "mitigation": "Implementar Azure DDoS Protection. Configurar NSGs e UDRs cuidadosamente e testá-los. Monitorar o uso de recursos da VNet."
+            }
+          ]
+        },
+        {
+          "id": "user_assigned_managed_identity",
+          "name": "Azure User-assigned Managed Identity",
+          "type": "Identity",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Um ator malicioso pode obter acesso à identidade gerenciada e usá-la para se passar pelo script de deployment.",
+              "mitigation": "Proteger o recurso ao qual a identidade gerenciada está associada. Monitorar o uso da identidade gerenciada através de logs de auditoria do Azure AD."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "A identidade gerenciada pode ter permissões excessivas, permitindo que um atacante execute ações além do escopo pretendido do script.",
+              "mitigation": "Aplicar o princípio do menor privilégio ao atribuir funções RBAC à identidade gerenciada. Revisar regularmente as permissões concedidas."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Metadados da identidade gerenciada podem ser expostos, fornecendo informações úteis para um atacante.",
+              "mitigation": "Restringir o acesso a recursos que podem consultar metadados da identidade gerenciada. Garantir que o ambiente de execução do script seja seguro."
+            }
+          ]
+        },
+        {
+          "id": "deployment_script_execution",
+          "name": "Azure Deployment Script Execution",
+          "type": "Compute",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Um ator malicioso pode se passar pelo ambiente de execução do script para realizar operações não autorizadas.",
+              "mitigation": "Garantir que o ambiente de execução do script seja isolado e seguro. Usar identidades gerenciadas para autenticação em vez de credenciais."
+            },
+            {
+              "category": "Tampering",
+              "threat": "O script em execução ou seu ambiente pode ser modificado, levando a deployments incorretos ou maliciosos.",
+              "mitigation": "Usar imagens de contêiner imutáveis para ambientes de script. Validar a integridade do script antes da execução. Monitorar o ambiente de execução para alterações."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "Não é possível provar que o script foi executado por uma identidade autorizada ou que os resultados são legítimos.",
+              "mitigation": "Registrar logs de auditoria detalhados da execução do script, incluindo a identidade que o invocou e os resultados. Assinar digitalmente os scripts."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "O script pode expor informações sensíveis (ex: segredos, dados de configuração) em logs ou variáveis de ambiente.",
+              "mitigation": "Evitar a impressão de segredos em logs. Usar Azure Key Vault para segredos. Criptografar logs e garantir acesso restrito."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "O script pode falhar devido a erros, esgotamento de recursos ou ataques, impedindo o deployment de recursos.",
+              "mitigation": "Implementar tratamento de erros robusto no script. Monitorar o status de execução do script e configurar alertas. Usar retries para operações de API."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "O script pode ter permissões excessivas, permitindo que um atacante que o comprometa execute ações privilegiadas.",
+              "mitigation": "Aplicar o princípio do menor privilégio à identidade associada ao script. Revisar e auditar regularmente as permissões."
+            }
+          ]
+        },
+        {
+          "id": "rbac_reader_role_assignment",
+          "name": "Azure RBAC Reader Role Assignment",
+          "type": "Identity",
+          "stride_analysis": [
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Embora 'Reader' seja de baixo privilégio, um atacante pode usar informações obtidas (ex: configurações de rede, segredos em texto claro) para encontrar uma vulnerabilidade e escalar privilégios.",
+              "mitigation": "Garantir que não haja segredos em texto claro em configurações visíveis. Monitorar logs de acesso para detecção de atividades incomuns por identidades com função de leitor."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "A função de leitor permite visualizar configurações e dados que podem ser sensíveis, mesmo que não permitam modificação.",
+              "mitigation": "Classificar dados e recursos. Restringir o escopo da função de leitor ao mínimo necessário. Criptografar dados em repouso e em trânsito."
+            }
+          ]
+        },
+        {
+          "id": "virtual_hub_connections",
+          "name": "Virtual Hub Connections",
+          "type": "Network",
+          "stride_analysis": [
+            {
+              "category": "Tampering",
+              "threat": "As conexões entre as VNets spoke e o Virtual Hub podem ser desabilitadas ou reconfiguradas, interrompendo a comunicação.",
+              "mitigation": "Proteger o acesso à configuração das conexões com RBAC. Usar Azure Policy para garantir a conformidade das configurações de conexão."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "A interrupção das conexões pode levar à perda de conectividade para as VNets spoke, impactando a disponibilidade dos serviços.",
+              "mitigation": "Monitorar a saúde e o status das conexões com Azure Network Watcher. Implementar redundância de conectividade quando possível."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Embora o tráfego dentro da backbone do Azure seja criptografado, a interceptação de metadados de conexão pode revelar a topologia da rede.",
+              "mitigation": "Restringir o acesso a logs de rede e configurações de conexão. Usar Azure Private Link para serviços PaaS para evitar exposição de IPs públicos."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "image_filename": "aws3.png",
+    "ground_truth_json": {
+      "architecture_title": "Mobile Application with AI-Powered Text-to-Audio Translation Workflow",
+      "cloud_provider": "AWS",
+      "components": [
+        {
+          "id": "mobile_client",
+          "name": "Mobile client",
+          "type": "External",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Um usuário mal-intencionado pode tentar se passar por um usuário legítimo ou por um aplicativo cliente.",
+              "mitigation": "Implementar autenticação forte via Amazon Cognito, incluindo MFA e políticas de senha robustas."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Dados enviados do cliente podem ser manipulados antes de chegar aos serviços AWS.",
+              "mitigation": "Utilizar HTTPS para todas as comunicações e implementar validação de entrada no lado do servidor (API Gateway, Lambda)."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "Um usuário pode negar ter realizado uma ação específica no aplicativo móvel.",
+              "mitigation": "Registrar todas as ações do usuário e eventos de autenticação no Amazon Cognito e CloudTrail."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Dados sensíveis podem ser expostos no dispositivo móvel ou durante a transmissão.",
+              "mitigation": "Garantir o armazenamento seguro de dados no dispositivo, criptografia de dados em trânsito (HTTPS) e em repouso."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Um ataque DDoS ou sobrecarga pode ser lançado do cliente móvel ou contra ele.",
+              "mitigation": "Implementar limitação de taxa (rate limiting) no Amazon API Gateway e mecanismos de proteção DDoS (AWS Shield)."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Um aplicativo móvel comprometido pode tentar obter privilégios não autorizados.",
+              "mitigation": "Aplicar o princípio do menor privilégio para as permissões do aplicativo e usar credenciais temporárias via AWS SDK/Cognito Identity Pools."
+            }
+          ]
+        },
+        {
+          "id": "aws_sdk",
+          "name": "AWS SDK",
+          "type": "External",
+          "stride_analysis": [
+            {
+              "category": "Tampering",
+              "threat": "Uma versão comprometida do AWS SDK pode ser usada para manipular chamadas de API ou dados.",
+              "mitigation": "Garantir que o SDK seja obtido de fontes oficiais e manter as bibliotecas atualizadas. Usar mecanismos de integridade de código."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Credenciais de acesso (chaves de API, segredos) podem ser incorporadas ou expostas no código do cliente.",
+              "mitigation": "Utilizar credenciais temporárias fornecidas pelo Amazon Cognito Identity Pools, evitando o armazenamento de credenciais de longo prazo no cliente."
+            }
+          ]
+        },
+        {
+          "id": "aws_amplify",
+          "name": "AWS Amplify",
+          "type": "Compute",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Um atacante pode hospedar conteúdo malicioso ou falsificar a interface do usuário do aplicativo.",
+              "mitigation": "Utilizar AWS WAF para proteger contra ataques comuns da web e garantir um pipeline de CI/CD seguro para implantações."
+            },
+            {
+              "category": "Tampering",
+              "threat": "O conteúdo estático do front-end (HTML, CSS, JavaScript) pode ser modificado indevidamente.",
+              "mitigation": "Implementar controle de versão rigoroso, pipelines de CI/CD automatizados e imutabilidade de implantação. Usar AWS WAF."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Informações sensíveis podem ser acidentalmente incluídas no código do front-end ou em arquivos estáticos.",
+              "mitigation": "Realizar varreduras de segurança no código e garantir que nenhum dado sensível seja armazenado em arquivos estáticos. Configurar políticas de bucket S3 restritivas."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Ataques DDoS podem sobrecarregar o serviço de hospedagem do Amplify.",
+              "mitigation": "Utilizar AWS Shield Standard/Advanced e AWS WAF para proteção contra DDoS e ataques de camada de aplicação."
+            }
+          ]
+        },
+        {
+          "id": "amazon_cognito",
+          "name": "Amazon Cognito",
+          "type": "Identity",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Um atacante pode se passar por um usuário legítimo através de roubo de credenciais ou ataques de força bruta.",
+              "mitigation": "Habilitar MFA, impor políticas de senha fortes, usar autenticação adaptativa e detecção de risco do Cognito."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Um usuário não autorizado pode modificar dados de perfil de outros usuários ou configurações de identidade.",
+              "mitigation": "Implementar controle de acesso baseado em funções (RBAC) via IAM e políticas de autorização finas para acesso a dados de usuário."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "Um usuário pode negar ter realizado uma ação de autenticação ou alteração de perfil.",
+              "mitigation": "Registrar todos os eventos de autenticação e modificações de perfil no CloudTrail e nos logs do Cognito."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Dados de usuário (e-mails, telefones) podem ser expostos indevidamente.",
+              "mitigation": "Criptografia de dados em repouso e em trânsito. Restringir o acesso aos atributos do usuário com políticas de IAM e escopos OIDC."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Ataques de força bruta ou sobrecarga de solicitações de autenticação podem indisponibilizar o serviço.",
+              "mitigation": "Utilizar limitação de taxa, CAPTCHA e detecção de risco do Cognito para mitigar ataques de força bruta."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Um usuário pode obter privilégios de acesso a recursos AWS além do que lhe é permitido.",
+              "mitigation": "Configurar políticas de IAM com o menor privilégio para os Identity Pools do Cognito e revisar regularmente as permissões."
+            }
+          ]
+        },
+        {
+          "id": "amazon_s3_images",
+          "name": "Amazon Simple Storage Service (Amazon S3) - Imagens",
+          "type": "Storage",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Um atacante pode fazer upload de arquivos maliciosos ou falsificados para o bucket S3.",
+              "mitigation": "Implementar validação de tipo de arquivo e, se necessário, varredura de vírus para uploads. Restringir uploads a usuários autenticados."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Imagens armazenadas podem ser modificadas, excluídas ou substituídas por usuários não autorizados.",
+              "mitigation": "Aplicar políticas de bucket S3 e políticas de IAM com o menor privilégio. Habilitar versionamento e MFA Delete para proteção contra exclusão acidental/maliciosa."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "Um usuário pode negar ter feito upload de uma imagem específica.",
+              "mitigation": "Habilitar logs de acesso ao servidor S3 e CloudTrail para registrar todas as operações no bucket."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Imagens sensíveis podem ser acessadas por usuários não autorizados.",
+              "mitigation": "Garantir que o bucket S3 não seja público. Aplicar políticas de bucket e IAM restritivas. Habilitar criptografia em repouso (SSE-S3/KMS) e em trânsito (HTTPS)."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Um atacante pode excluir o bucket S3 ou sobrecarregá-lo com uploads/downloads excessivos.",
+              "mitigation": "Proteger o bucket com políticas de IAM que restrinjam a exclusão. Usar limitação de taxa se o acesso for via API Gateway."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Um usuário pode obter permissões para alterar as configurações do bucket S3.",
+              "mitigation": "Aplicar políticas de IAM com o menor privilégio para gerenciamento do S3 e usar MFA Delete para operações críticas."
+            }
+          ]
+        },
+        {
+          "id": "amazon_api_gateway",
+          "name": "Amazon API Gateway",
+          "type": "Network",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Um atacante pode tentar se passar por um cliente legítimo para acessar as APIs.",
+              "mitigation": "Utilizar autorizadores do Cognito ou IAM para autenticação e autorização de chamadas de API."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Solicitações de API podem ser manipuladas para alterar o comportamento esperado do backend.",
+              "mitigation": "Implementar validação de esquema de solicitação, AWS WAF e sanitização de entrada no backend."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "Um usuário pode negar ter feito chamadas de API específicas.",
+              "mitigation": "Habilitar logs de acesso do API Gateway para CloudWatch Logs e CloudTrail para registrar todas as chamadas de API."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Dados sensíveis podem ser expostos em respostas de API ou logs.",
+              "mitigation": "Garantir que as respostas de API filtrem dados sensíveis. Criptografia em trânsito (HTTPS) é padrão. Restringir acesso aos logs."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Ataques DDoS ou sobrecarga de solicitações podem indisponibilizar as APIs.",
+              "mitigation": "Configurar limitação de taxa e planos de uso no API Gateway. Utilizar AWS WAF e AWS Shield para proteção DDoS."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Um atacante pode obter acesso a endpoints de API não autorizados.",
+              "mitigation": "Utilizar autorizadores do Cognito ou IAM para controle de acesso granular a cada endpoint de API."
+            }
+          ]
+        },
+        {
+          "id": "aws_step_functions",
+          "name": "AWS Step Functions workflow",
+          "type": "Compute",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Uma execução de Step Functions pode ser iniciada por uma entidade não autorizada.",
+              "mitigation": "Restringir as permissões de execução de Step Functions via políticas de IAM. Validar a origem dos eventos que disparam o workflow."
+            },
+            {
+              "category": "Tampering",
+              "threat": "O estado do workflow ou a definição da máquina de estado podem ser modificados indevidamente.",
+              "mitigation": "Aplicar políticas de IAM com o menor privilégio para gerenciamento de Step Functions. Utilizar versionamento para máquinas de estado."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "A execução de um workflow pode ser negada.",
+              "mitigation": "Registrar todas as execuções e transições de estado no CloudTrail e nos logs de execução do Step Functions."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Dados sensíveis podem ser expostos nos inputs/outputs do estado do workflow ou nos logs.",
+              "mitigation": "Criptografar dados sensíveis passados entre estados. Restringir o acesso aos logs de execução com políticas de IAM."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Execuções excessivas ou loops infinitos podem esgotar os recursos ou incorrer em custos elevados.",
+              "mitigation": "Implementar limites de tempo de execução e contadores de repetição. Monitorar execuções com CloudWatch e configurar alarmes."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Um atacante pode obter permissões para alterar a máquina de estado ou as permissões de execução.",
+              "mitigation": "Aplicar políticas de IAM com o menor privilégio para gerenciamento e execução de Step Functions."
+            }
+          ]
+        },
+        {
+          "id": "amazon_textract",
+          "name": "Amazon Textract",
+          "type": "AI/ML",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Entrada maliciosa (imagens com conteúdo enganoso) pode ser enviada para processamento.",
+              "mitigation": "Implementar validação de conteúdo e formato de imagem antes de enviar para o Textract."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Dados extraídos podem ser manipulados durante o trânsito ou armazenamento temporário.",
+              "mitigation": "Garantir criptografia em trânsito (HTTPS) e em repouso para dados processados. Validar a integridade dos dados após a extração."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Documentos sensíveis processados pelo Textract podem ter seu conteúdo exposto.",
+              "mitigation": "Restringir o acesso ao Textract com políticas de IAM. Criptografar dados em trânsito e em repouso. Não armazenar dados sensíveis desnecessariamente."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Solicitações excessivas podem sobrecarregar o serviço ou exceder as cotas.",
+              "mitigation": "Gerenciar o volume de solicitações e monitorar as cotas de serviço. Implementar retry com backoff exponencial."
+            }
+          ]
+        },
+        {
+          "id": "amazon_comprehend",
+          "name": "Amazon Comprehend",
+          "type": "AI/ML",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Entrada maliciosa (texto enganoso) pode ser enviada para análise de linguagem.",
+              "mitigation": "Implementar validação e sanitização de texto antes de enviar para o Comprehend."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Dados de texto podem ser manipulados durante o trânsito para o Comprehend.",
+              "mitigation": "Garantir criptografia em trânsito (HTTPS) para dados de texto. Validar a integridade dos dados."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Texto sensível processado pelo Comprehend pode ser exposto.",
+              "mitigation": "Restringir o acesso ao Comprehend com políticas de IAM. Criptografar dados em trânsito e em repouso. Não armazenar dados sensíveis desnecessariamente."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Solicitações excessivas podem sobrecarregar o serviço ou exceder as cotas.",
+              "mitigation": "Gerenciar o volume de solicitações e monitorar as cotas de serviço. Implementar retry com backoff exponencial."
+            }
+          ]
+        },
+        {
+          "id": "amazon_translate",
+          "name": "Amazon Translate",
+          "type": "AI/ML",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Entrada maliciosa (texto enganoso) pode ser enviada para tradução.",
+              "mitigation": "Implementar validação e sanitização de texto antes de enviar para o Translate."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Texto pode ser manipulado durante o trânsito para o Translate ou durante o processo de tradução.",
+              "mitigation": "Garantir criptografia em trânsito (HTTPS) para dados de texto. Validar a integridade dos dados."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Texto sensível enviado para tradução pode ser exposto.",
+              "mitigation": "Restringir o acesso ao Translate com políticas de IAM. Criptografar dados em trânsito e em repouso. Não armazenar dados sensíveis desnecessariamente."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Solicitações excessivas podem sobrecarregar o serviço ou exceder as cotas.",
+              "mitigation": "Gerenciar o volume de solicitações e monitorar as cotas de serviço. Implementar retry com backoff exponencial."
+            }
+          ]
+        },
+        {
+          "id": "amazon_polly",
+          "name": "Amazon Polly",
+          "type": "AI/ML",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Entrada maliciosa (texto enganoso) pode ser enviada para geração de áudio.",
+              "mitigation": "Implementar validação e sanitização de texto antes de enviar para o Polly."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Texto pode ser manipulado durante o trânsito para o Polly, resultando em áudio incorreto.",
+              "mitigation": "Garantir criptografia em trânsito (HTTPS) para dados de texto. Validar a integridade dos dados."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Texto sensível enviado para geração de áudio pode ser exposto.",
+              "mitigation": "Restringir o acesso ao Polly com políticas de IAM. Criptografar dados em trânsito e em repouso. Não armazenar dados sensíveis desnecessariamente."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Solicitações excessivas podem sobrecarregar o serviço ou exceder as cotas.",
+              "mitigation": "Gerenciar o volume de solicitações e monitorar as cotas de serviço. Implementar retry com backoff exponencial."
+            }
+          ]
+        },
+        {
+          "id": "amazon_s3_audio",
+          "name": "Amazon Simple Storage Service (Amazon S3) - Áudio",
+          "type": "Storage",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Um atacante pode fazer upload de arquivos de áudio maliciosos ou falsificados para o bucket S3 (se houver acesso direto).",
+              "mitigation": "Restringir uploads a entidades autorizadas (Step Functions). Implementar validação de tipo de arquivo."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Arquivos de áudio armazenados podem ser modificados, excluídos ou substituídos por usuários não autorizados.",
+              "mitigation": "Aplicar políticas de bucket S3 e políticas de IAM com o menor privilégio. Habilitar versionamento e MFA Delete para proteção contra exclusão acidental/maliciosa."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "A criação de um arquivo de áudio pode ser negada.",
+              "mitigation": "Habilitar logs de acesso ao servidor S3 e CloudTrail para registrar todas as operações no bucket."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Arquivos de áudio sensíveis podem ser acessados por usuários não autorizados.",
+              "mitigation": "Garantir que o bucket S3 não seja público. Aplicar políticas de bucket e IAM restritivas. Habilitar criptografia em repouso (SSE-S3/KMS) e em trânsito (HTTPS)."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Um atacante pode excluir o bucket S3 ou sobrecarregá-lo com downloads excessivos.",
+              "mitigation": "Proteger o bucket com políticas de IAM que restrinjam a exclusão. Usar limitação de taxa se o acesso for via CloudFront."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Um usuário pode obter permissões para alterar as configurações do bucket S3.",
+              "mitigation": "Aplicar políticas de IAM com o menor privilégio para gerenciamento do S3 e usar MFA Delete para operações críticas."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "image_filename": "aws2.png",
+    "ground_truth_json": {
+      "architecture_title": "AWS Direct Connect and Site-to-Site VPN Hybrid Connectivity",
+      "components": [
+        {
+          "id": "corporate_network",
+          "name": "Corporate Network (User/Server)",
+          "type": "Network",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Malicious actor impersonates legitimate user or server within the corporate network.",
+              "mitigation": "Implement strong authentication (MFA), network segmentation, and access controls."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Data modified in transit or at rest within the corporate network by unauthorized entities.",
+              "mitigation": "Use encryption for data at rest and in transit, implement integrity checks."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "User or server denies performing an action or sending data.",
+              "mitigation": "Implement robust logging, audit trails, and non-repudiation services."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Sensitive data exposed to unauthorized parties within the corporate network.",
+              "mitigation": "Enforce strict access controls, data encryption, and Data Loss Prevention (DLP)."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Attackers disrupt corporate network services or make resources unavailable.",
+              "mitigation": "Implement network redundancy, DDoS protection, and capacity planning."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Unauthorized user gains higher access rights within the corporate network.",
+              "mitigation": "Apply least privilege principle, conduct regular access reviews, and strong IAM."
+            }
+          ]
+        },
+        {
+          "id": "customer_gateway",
+          "name": "Customer Gateway",
+          "type": "Network Device",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Malicious device impersonates the customer gateway to intercept traffic.",
+              "mitigation": "Secure device configuration, strong authentication for management, BGP authentication."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Gateway configuration or traffic modified by unauthorized individuals.",
+              "mitigation": "Secure configuration management, integrity checks, physical security of device."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "Administrator denies making configuration changes on the gateway.",
+              "mitigation": "Implement audit logs for all configuration changes and secure logging."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Gateway logs or sensitive configuration data exposed to unauthorized parties.",
+              "mitigation": "Restrict access to gateway, encrypt sensitive configuration data, secure logging."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Gateway overwhelmed or disabled, disrupting connectivity to AWS.",
+              "mitigation": "Deploy redundant gateways, implement monitoring, and ensure capacity planning."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Unauthorized access to gateway management interface or credentials.",
+              "mitigation": "Use strong admin credentials, network segmentation for management interface."
+            }
+          ]
+        },
+        {
+          "id": "aws_direct_connect_location",
+          "name": "AWS Direct Connect Location",
+          "type": "Connectivity Service",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Malicious entity impersonates customer/partner or AWS device at the DX location.",
+              "mitigation": "Secure device configuration, BGP authentication, AWS managed security."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Traffic or device configuration modified at the Direct Connect location.",
+              "mitigation": "Physical security, secure configuration, integrity checks, AWS controls."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "Party (customer/AWS) denies traffic transmission or configuration changes.",
+              "mitigation": "Detailed logging, BGP session monitoring, AWS CloudTrail."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Traffic intercepted or device logs exposed at the Direct Connect location.",
+              "mitigation": "Encrypt traffic (VPN over DX), restrict access to devices, AWS security."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Device overwhelmed, link cut, or misconfigured at the DX location.",
+              "mitigation": "Redundant devices/links, physical security, monitoring, AWS resilience."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Unauthorized access to device management at the Direct Connect location.",
+              "mitigation": "Strong admin credentials, secure management network, AWS internal controls."
+            }
+          ]
+        },
+        {
+          "id": "virtual_private_gateway",
+          "name": "Virtual Private Gateway (VGW)",
+          "type": "AWS Service",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Malicious entity impersonates the VGW to redirect or intercept traffic.",
+              "mitigation": "AWS managed service, customer verifies connection and routing."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Routing or traffic modified on the VGW by unauthorized means.",
+              "mitigation": "AWS managed service, secure routing configuration, CloudTrail monitoring."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "AWS denies routing changes or traffic processing by the VGW.",
+              "mitigation": "AWS logging, CloudTrail for configuration changes, VPC Flow Logs."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "VGW logs or routing tables exposed to unauthorized parties.",
+              "mitigation": "AWS managed service, restrict access to VPC logs and CloudTrail."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "VGW overwhelmed or misconfigured, disrupting connectivity to VPC.",
+              "mitigation": "AWS managed service, redundant VGWs, monitoring, auto-scaling."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Unauthorized access to VGW configuration or associated AWS resources.",
+              "mitigation": "AWS IAM policies, least privilege principle, regular access reviews."
+            }
+          ]
+        },
+        {
+          "id": "aws_vpc",
+          "name": "AWS VPC (Subnets & EC2 Instances)",
+          "type": "AWS Network/Compute",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Malicious instance impersonates legitimate EC2 instance or service within VPC.",
+              "mitigation": "Network ACLs, Security Groups, instance authentication, IAM roles."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Data modified on EC2 instances or in transit within the VPC.",
+              "mitigation": "Encryption for data at rest/in transit, integrity checks, host-based security."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "Instance denies actions or data changes within the VPC.",
+              "mitigation": "CloudTrail, VPC Flow Logs, instance logging, audit trails."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Sensitive data exposed from instances, subnets, or storage within VPC.",
+              "mitigation": "Security Groups, Network ACLs, data encryption, IAM policies, DLP."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Instances overwhelmed, network disrupted, or resources exhausted in VPC.",
+              "mitigation": "Auto Scaling, load balancing, DDoS protection, network segmentation."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Unauthorized access to EC2 instances or AWS resources within the VPC.",
+              "mitigation": "IAM roles, least privilege, regular patching, vulnerability scans, host hardening."
+            }
+          ]
+        },
+        {
+          "id": "direct_connect_vpn_connection",
+          "name": "Direct Connect / Site-to-Site VPN Connection",
+          "type": "Data Path",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Malicious actor impersonates connection endpoint to inject or redirect traffic.",
+              "mitigation": "BGP authentication, VPN tunnel authentication (IPsec pre-shared keys)."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Data modified in transit over the Direct Connect or VPN connection.",
+              "mitigation": "VPN encryption (IPsec), MACsec for Direct Connect, integrity checks."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "Party denies sending or receiving data over the connection.",
+              "mitigation": "Connection logs, network monitoring, CloudTrail for connection events."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Data intercepted during transit over the Direct Connect or VPN link.",
+              "mitigation": "VPN encryption (IPsec), physical security of Direct Connect link."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Connection link cut, saturated, or misconfigured, disrupting data flow.",
+              "mitigation": "Redundant connections, BGP failover, capacity planning, monitoring."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Unauthorized access to connection configuration or routing tables.",
+              "mitigation": "Secure management of customer gateway and VGW, IAM policies."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "image_filename": "azure1.png",
+    "ground_truth_json": {
+      "architecture_title": "Azure Data Platform with Microsoft Fabric",
+      "components": [
+        {
+          "id": "1",
+          "name": "SQL Database",
+          "type": "Store",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Malicious actor impersonates database user.",
+              "mitigation": "Implement strong authentication (MFA), restrict network access."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Unauthorized modification of data in the database.",
+              "mitigation": "Enforce least privilege, use stored procedures, data encryption."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "User denies performing an action.",
+              "mitigation": "Enable comprehensive auditing and logging of all database operations."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Sensitive data exposed to unauthorized users.",
+              "mitigation": "Encrypt data at rest/in transit, implement row-level security."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Database becomes unavailable due to attack.",
+              "mitigation": "Implement resource governance, monitor for anomalies, scale resources."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Low-privileged user gains admin rights.",
+              "mitigation": "Regularly review permissions, follow principle of least privilege."
+            }
+          ]
+        },
+        {
+          "id": "1_pipeline",
+          "name": "Data Factory pipeline",
+          "type": "Load and ingest",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Malicious entity impersonates pipeline service.",
+              "mitigation": "Use managed identities, secure service principal authentication."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Pipeline definition or data in transit modified.",
+              "mitigation": "Implement version control, data integrity checks, secure endpoints."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "Pipeline execution or data source denies actions.",
+              "mitigation": "Enable detailed logging for all pipeline activities and data access."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Sensitive data exposed during ETL process.",
+              "mitigation": "Encrypt data in transit/at rest, secure data stores, network isolation."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Pipeline fails or is overwhelmed, stopping data flow.",
+              "mitigation": "Implement retry policies, monitor pipeline health, scale resources."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Unauthorized access to pipeline control plane.",
+              "mitigation": "Restrict access to Data Factory, use role-based access control (RBAC)."
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "name": "Microsoft Dynamics 365",
+          "type": "Stream Source",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Malicious user impersonates a legitimate Dynamics 365 user.",
+              "mitigation": "Implement strong authentication (MFA), identity protection."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Unauthorized modification of data within Dynamics 365.",
+              "mitigation": "Enforce role-based security, audit trails, data validation."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "User denies actions performed in Dynamics 365.",
+              "mitigation": "Comprehensive audit logging, non-repudiation controls."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Sensitive Dynamics 365 data exposed.",
+              "mitigation": "Configure data loss prevention (DLP), access controls, encryption."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Dynamics 365 service becomes unavailable.",
+              "mitigation": "Rely on Microsoft's platform resilience and monitoring."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "User gains unauthorized higher privileges.",
+              "mitigation": "Regularly review user roles and permissions, principle of least privilege."
+            }
+          ]
+        },
+        {
+          "id": "3",
+          "name": "Event Hubs",
+          "type": "Stream Ingestion",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Malicious sender impersonates a legitimate event producer.",
+              "mitigation": "Use Shared Access Signatures (SAS) or Azure AD for authentication."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Events modified in transit or at rest in Event Hubs.",
+              "mitigation": "Use TLS for data in transit, data integrity checks, secure access."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "Event producer denies sending specific events.",
+              "mitigation": "Enable logging of all event ingestion, secure event signing."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Sensitive event data exposed to unauthorized consumers.",
+              "mitigation": "Encrypt data, implement network security, access controls."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Event Hubs overwhelmed, preventing event ingestion.",
+              "mitigation": "Implement throttling, monitor capacity, scale Event Hubs."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Unauthorized access to Event Hubs management.",
+              "mitigation": "Restrict access to Event Hubs namespace, use RBAC."
+            }
+          ]
+        },
+        {
+          "id": "4_datalake",
+          "name": "Data Lake Storage",
+          "type": "Store",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Malicious actor impersonates a legitimate data lake user.",
+              "mitigation": "Use Azure AD authentication, managed identities."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Unauthorized modification or deletion of data.",
+              "mitigation": "Implement immutability policies, access controls (ACLs, RBAC)."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "User denies data access or modification actions.",
+              "mitigation": "Enable comprehensive audit logging for all data operations."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Sensitive data in data lake exposed.",
+              "mitigation": "Encrypt data at rest/in transit, network isolation (VNet), access controls."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Data lake becomes inaccessible or slow.",
+              "mitigation": "Monitor storage usage, implement throttling, scale storage."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Low-privileged user gains admin rights.",
+              "mitigation": "Regularly review permissions, follow principle of least privilege."
+            }
+          ]
+        },
+        {
+          "id": "4_onelake",
+          "name": "OneLake",
+          "type": "Process and manipulate",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Malicious user impersonates a legitimate OneLake user.",
+              "mitigation": "Use Azure AD authentication, strong identity management."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Unauthorized modification of data in OneLake.",
+              "mitigation": "Implement access controls (RBAC), data integrity checks, versioning."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "User denies data access or modification actions.",
+              "mitigation": "Enable comprehensive audit logging for all data operations."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Sensitive data in OneLake exposed.",
+              "mitigation": "Encrypt data at rest/in transit, implement granular access controls."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "OneLake becomes unavailable or slow.",
+              "mitigation": "Rely on Fabric's built-in resilience, monitor capacity."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "User gains unauthorized higher privileges.",
+              "mitigation": "Regularly review user roles and permissions, principle of least privilege."
+            }
+          ]
+        },
+        {
+          "id": "realtime_intelligence",
+          "name": "Real-Time Intelligence",
+          "type": "Serverless analysis",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Malicious source feeds false data to intelligence.",
+              "mitigation": "Authenticate data sources, validate input data."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Data tampered with during real-time processing.",
+              "mitigation": "Use secure communication, data integrity checks, immutable logs."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "Data source denies sending data or processing actions.",
+              "mitigation": "Log all data ingestion and processing activities."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Sensitive real-time insights exposed.",
+              "mitigation": "Implement access controls, encrypt data, secure output channels."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Real-time processing fails or is overwhelmed.",
+              "mitigation": "Implement auto-scaling, monitor performance, robust error handling."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Unauthorized access to intelligence configuration.",
+              "mitigation": "Restrict access to service, use RBAC for management."
+            }
+          ]
+        },
+        {
+          "id": "5_sql_endpoint",
+          "name": "SQL analytics endpoint",
+          "type": "Collaborate and consume",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Malicious actor impersonates the analytics endpoint.",
+              "mitigation": "Use secure connection strings, validate endpoint identity."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Query results or underlying data tampered with.",
+              "mitigation": "Enforce read-only access, data integrity checks, secure data source."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "User denies running specific queries.",
+              "mitigation": "Enable query logging, audit user activity on the endpoint."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Sensitive data exposed via SQL queries.",
+              "mitigation": "Implement row/column-level security, data masking, access controls."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Endpoint overwhelmed, preventing query execution.",
+              "mitigation": "Monitor query performance, optimize queries, scale resources."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Unauthorized access to endpoint configuration.",
+              "mitigation": "Restrict access to endpoint, use RBAC for management."
+            }
+          ]
+        },
+        {
+          "id": "spark_pool",
+          "name": "Spark pool",
+          "type": "Collaborate and consume",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Malicious user impersonates a legitimate Spark job.",
+              "mitigation": "Use secure authentication for job submission, managed identities."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Spark job code or data processed is modified.",
+              "mitigation": "Implement code review, secure storage for code, data integrity checks."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "User denies submitting or running a Spark job.",
+              "mitigation": "Log all job submissions, user activities, and execution details."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Sensitive data exposed during Spark processing.",
+              "mitigation": "Encrypt data, secure output, network isolation, access controls."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Spark pool overwhelmed, preventing job execution.",
+              "mitigation": "Implement auto-scaling, monitor resource usage, optimize jobs."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Unauthorized access to Spark pool management.",
+              "mitigation": "Restrict access to Spark pool, use RBAC for management."
+            }
+          ]
+        },
+        {
+          "id": "pipelines_fabric",
+          "name": "Pipelines (Fabric)",
+          "type": "Collaborate and consume",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Malicious entity impersonates pipeline service.",
+              "mitigation": "Use managed identities, secure service principal authentication."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Pipeline definition or data in transit modified.",
+              "mitigation": "Implement version control, data integrity checks, secure endpoints."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "Pipeline execution or data source denies actions.",
+              "mitigation": "Enable detailed logging for all pipeline activities and data access."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Sensitive data exposed during ETL process.",
+              "mitigation": "Encrypt data in transit/at rest, secure data stores, network isolation."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Pipeline fails or is overwhelmed, stopping data flow.",
+              "mitigation": "Implement retry policies, monitor pipeline health, scale resources."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Unauthorized access to pipeline control plane.",
+              "mitigation": "Restrict access to Pipelines, use role-based access control (RBAC)."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "image_filename": "azure3.png",
+    "ground_truth_json": {
+      "architecture_title": "Application Landing Zone Architecture",
+      "components": [
+        {
+          "id": "comp-1",
+          "name": "Users",
+          "type": "External Entity",
+          "stride_analysis": [
+            {
+              "category": "Spoofing",
+              "threat": "Attacker impersonates a legitimate user.",
+              "mitigation": "Implement strong authentication (MFA) and identity verification."
+            },
+            {
+              "category": "Repudiation",
+              "threat": "User denies performing an action.",
+              "mitigation": "Maintain comprehensive audit logs and activity trails."
+            }
+          ]
+        },
+        {
+          "id": "comp-2",
+          "name": "Application Gateway + WAF",
+          "type": "Network Security",
+          "stride_analysis": [
+            {
+              "category": "Tampering",
+              "threat": "Malicious requests bypass WAF rules.",
+              "mitigation": "Regularly update WAF rules and use managed rule sets."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "High traffic volume overwhelms gateway.",
+              "mitigation": "Utilize Azure DDoS Protection, auto-scaling, and rate limiting."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "WAF reveals internal system errors.",
+              "mitigation": "Configure custom error pages; disable verbose error messages."
+            }
+          ]
+        },
+        {
+          "id": "comp-3",
+          "name": "App Service (Chat UI)",
+          "type": "Application",
+          "stride_analysis": [
+            {
+              "category": "Tampering",
+              "threat": "Data modified in transit or at rest.",
+              "mitigation": "Implement input validation, secure coding, and data encryption."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Sensitive data exposed via API or logs.",
+              "mitigation": "Encrypt data, enforce strict access control, secure logging."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Application overwhelmed by requests.",
+              "mitigation": "Enable auto-scaling, implement rate limiting, robust error handling."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Vulnerability allows unauthorized access.",
+              "mitigation": "Apply least privilege, secure coding, regular security scans."
+            }
+          ]
+        },
+        {
+          "id": "comp-4",
+          "name": "Azure Key Vault",
+          "type": "Secret Management",
+          "stride_analysis": [
+            {
+              "category": "Information Disclosure",
+              "threat": "Secrets accessed by unauthorized entities.",
+              "mitigation": "Enforce strict access policies (RBAC) and network isolation."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Secrets modified or deleted without authorization.",
+              "mitigation": "Use immutable secrets, audit logs, strict write permissions."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Unauthorized user gains access to secrets.",
+              "mitigation": "Apply least privilege, MFA, and managed identities."
+            }
+          ]
+        },
+        {
+          "id": "comp-5",
+          "name": "Azure Cosmos DB",
+          "type": "Database",
+          "stride_analysis": [
+            {
+              "category": "Information Disclosure",
+              "threat": "Sensitive data read by unauthorized users.",
+              "mitigation": "Encrypt data at rest/in transit, use RBAC, network isolation."
+            },
+            {
+              "category": "Tampering",
+              "threat": "Data modified or deleted without authorization.",
+              "mitigation": "Enforce strict write permissions, input validation, audit logs."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Database overwhelmed or unavailable.",
+              "mitigation": "Enable auto-scaling, provisioned throughput, and monitoring."
+            }
+          ]
+        },
+        {
+          "id": "comp-6",
+          "name": "Build agents/Jump boxes",
+          "type": "Management/Deployment",
+          "stride_analysis": [
+            {
+              "category": "Tampering",
+              "threat": "Compromised agent injects malicious code.",
+              "mitigation": "Secure build pipelines, code signing, vulnerability scanning."
+            },
+            {
+              "category": "Information Disclosure",
+              "threat": "Sensitive data (credentials, source code) exposed.",
+              "mitigation": "Apply least privilege, data encryption, secure storage."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Attacker gains control of agent.",
+              "mitigation": "Use hardened images, regular patching, network isolation."
+            }
+          ]
+        },
+        {
+          "id": "comp-7",
+          "name": "Azure Firewall",
+          "type": "Network Security",
+          "stride_analysis": [
+            {
+              "category": "Tampering",
+              "threat": "Firewall rules modified by unauthorized entity.",
+              "mitigation": "Enforce strict RBAC on firewall, audit configuration changes."
+            },
+            {
+              "category": "Denial of Service",
+              "threat": "Firewall overwhelmed, blocking legitimate traffic.",
+              "mitigation": "Ensure scalability, monitoring, and upstream DDoS protection."
+            },
+            {
+              "category": "Elevation of Privilege",
+              "threat": "Attacker exploits firewall vulnerability.",
+              "mitigation": "Keep firewall updated, apply security patches promptly."
+            }
+          ]
+        }
+      ]
+    }
+  }
+]
