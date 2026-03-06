@@ -54,7 +54,7 @@ O Fine-Tuning estático (SFT) "congela" o conhecimento do modelo. Em segurança 
 
 A Abordagem "In-Context"
 
-Utilizamos um dataset curado (dataset_treino_completo.json) que é injetado dinamicamente no contexto do modelo Gemini 2.5 Flash em tempo de execução.
+Utilizamos um dataset curado (dataset_treino.json) que é injetado dinamicamente no contexto do modelo Gemini 2.5 Flash em tempo de execução.
 
 Dataset JSON: Contém pares de Diagrama -> Análise Ideal (Golden Master).
 
