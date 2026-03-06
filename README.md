@@ -12,7 +12,7 @@ arquitetos e desenvolvedores.*
 
 #
 #
-#
+
 
 ## Resumo do Projeto
 
@@ -23,7 +23,7 @@ Projeto desenvolvido para o Hackathon I.A. para Devs (FIAP 2026).
 
 💻 Visão Geral
 
-<img src="https://raw.githubusercontent.com/ErickMBarreto/HackatonFiap/refs/heads/main/assets/01.png">
+<img src="https://raw.githubusercontent.com/ErickMBarreto/HackatonFiap/refs/heads/main/assets/1.png">
 
 O AI Security Engine é uma solução avançada de Inteligência Artificial concebida para atuar como um Arquiteto de Segurança Assistente (vSA). A ferramenta automatiza o processo crítico de Threat Modeling, interpretando visualmente diagramas de infraestrutura e arquitetura de software (AWS, Azure, GCP, On-premise) para extrair insights acionáveis de segurança.
 
@@ -31,7 +31,7 @@ A engine realiza uma análise profunda baseada na metodologia STRIDE (Spoofing, 
 
 📢 Funcionalidades Principais
 
-<img src="https://raw.githubusercontent.com/ErickMBarreto/HackatonFiap/refs/heads/main/assets/02.png">
+<img src="https://raw.githubusercontent.com/ErickMBarreto/HackatonFiap/refs/heads/main/assets/2.png">
 
 Análise Visual Semântica de Alta Fidelidade: O motor de visão interpreta arquiteturas complexas (Cloud e On-premise) puramente através da imagem. Ao contrário de ferramentas baseadas em tags, a solução extrai o contexto de segurança sem a necessidade de metadados.
 
@@ -44,7 +44,7 @@ Processamento Bilíngue Inteligente: O núcleo da IA consome a terminologia téc
 🧠 Arquitetura Técnica (Inovação)
 
 
-<img src="https://raw.githubusercontent.com/ErickMBarreto/HackatonFiap/refs/heads/main/assets/03.png">
+<img src="https://raw.githubusercontent.com/ErickMBarreto/HackatonFiap/refs/heads/main/assets/3.png">
 
 Para atender ao requisito de "Treinamento do Modelo" de forma eficiente e escalável, optamos pela arquitetura de Dynamic In-Context Learning (Few-Shot Prompting).
 
@@ -90,7 +90,7 @@ Exemplo de estrutura de anotação:
 
 ## 🛠️ Como Executar
 
-<img src="https://raw.githubusercontent.com/ErickMBarreto/HackatonFiap/refs/heads/main/assets/04.png">
+<img src="https://raw.githubusercontent.com/ErickMBarreto/HackatonFiap/refs/heads/main/assets/4.png">
 
 
 1. Clone este repositório ou baixe os arquivos.
