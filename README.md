@@ -1,73 +1,70 @@
-# Hackaton - FIAP - AI SECURITY ENGINE
-Hackaton - Fase 05 - Pos-Tech (FIAP) / Uma ferramenta de inteligência artificial projetada para atuar como um Security Architect assistente.
+# Hackathon - FIAP - AI SECURITY ENGINE
+Hackathon - Phase 05 - Pos-Tech (FIAP) / An artificial intelligence tool designed to act as an assistant Security Architect.
 ___
 
-#### Hackaton - Fase 05 da Pos-Tech (FIAP)
+#### Hackathon - Phase 05 of Pos-Tech (FIAP)
 
-> *... usar de novas tecnologias para identificar e tratar
-vulnerabilidades que possam colocar em risco a segurança dos sistemas criados pelos
-arquitetos e desenvolvedores.*
+> *... leveraging new technologies to identify and address vulnerabilities that could jeopardize the security of systems created by architects and developers.*
 
-> *Um dos desafios é utilizar a Inteligência Artificial para realizar automaticamente a modelagem de ameaças, baseado na metodologia STRIDE de um sistema a partir de um diagrama de arquitetura de software em imagem. ...*
+> *One of the key challenges is utilizing Artificial Intelligence to automatically perform threat modeling based on the STRIDE methodology from a software architecture diagram image. ...*
 
 #
 #
 
 
-## Resumo do Projeto
+## Project Summary
 
 ⚙ AI SECURITY ENGINE
 
 Automated Threat Modeling (STRIDE) using Generative Vision Language Models.
-Projeto desenvolvido para o Hackathon I.A. para Devs (FIAP 2026).
+Project developed for the AI for Devs Hackathon (FIAP 2026).
 
-💻 Visão Geral
+💻 Overview
 
 <img src="https://raw.githubusercontent.com/ErickMBarreto/HackatonFiap/refs/heads/main/assets/1.png">
 
-O AI Security Engine é uma solução avançada de Inteligência Artificial concebida para atuar como um Arquiteto de Segurança Assistente (vSA). A ferramenta automatiza o processo crítico de Threat Modeling, interpretando visualmente diagramas de infraestrutura e arquitetura de software (AWS, Azure, GCP, On-premise) para extrair insights acionáveis de segurança.
+The AI Security Engine is an advanced Artificial Intelligence solution engineered to act as a Virtual Assistant Security Architect (vSA). The tool automates the critical threat modeling process by visually interpreting infrastructure and software architecture diagrams (AWS, Azure, GCP, On-premise) to extract actionable security insights.
 
-A engine realiza uma análise profunda baseada na metodologia STRIDE (Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service e Elevation of Privilege), entregando um relatório técnico detalhado com vetores de ataque e respectivas mitigações.
+The engine conducts a deep-dive analysis based on the STRIDE methodology (Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, and Elevation of Privilege), delivering a comprehensive technical report complete with attack vectors and their respective mitigations.
 
-📢 Funcionalidades Principais
+📢 Key Features
 
 <img src="https://raw.githubusercontent.com/ErickMBarreto/HackatonFiap/refs/heads/main/assets/2.png">
 
-Análise Visual Semântica de Alta Fidelidade: O motor de visão interpreta arquiteturas complexas (Cloud e On-premise) puramente através da imagem. Ao contrário de ferramentas baseadas em tags, a solução extrai o contexto de segurança sem a necessidade de metadados.
+High-Fidelity Semantic Visual Analysis: The vision engine interprets complex architectures (Cloud and On-premise) purely through imagery. Unlike tag-based tools, this solution extracts security context without requiring underlying metadata.
 
-Engine de Relatórios STRIDE: Geração automatizada de documentação técnica em conformidade com o STRIDE. O relatório consolida a identificação de ativos, a matriz de ameaças e o plano de mitigação estratégica em um PDF pronto para auditoria.
+STRIDE Reporting Engine: Automated generation of STRIDE-compliant technical documentation. The report consolidates asset identification, the threat matrix, and a strategic mitigation plan into an audit-ready PDF.
 
-User Experience (UX) Científica: Interface gráfica intuitiva (GUI) desenvolvida no ambiente Google Colab. Projetada para facilitar o fluxo de trabalho de pesquisadores e analistas, permitindo o upload e a análise em poucos cliques.
+Scientific User Experience (UX): An intuitive graphical user interface (GUI) developed within the Google Colab environment. Designed to streamline the workflow for researchers and analysts, allowing uploads and analysis in just a few clicks.
 
-Processamento Bilíngue Inteligente: O núcleo da IA consome a terminologia técnica no padrão global (Inglês), garantindo maior precisão na identificação de componentes, mas realiza a tradução contextualizada para gerar relatórios executivos em Português do Brasil (PT-BR).
+Intelligent Bilingual Processing: The AI core consumes technical terminology using global standards (English), ensuring higher accuracy in component identification, while performing contextual translation to generate executive reports in Brazilian Portuguese (PT-BR).
 
-🧠 Arquitetura Técnica (Inovação)
-
+🧠 Technical Architecture (Innovation)
 
 <img src="https://raw.githubusercontent.com/ErickMBarreto/HackatonFiap/refs/heads/main/assets/3.png">
 
-Para atender ao requisito de "Treinamento do Modelo" de forma eficiente e escalável, optamos pela arquitetura de Dynamic In-Context Learning (Few-Shot Prompting).
+To meet the "Model Training" requirement efficiently and scalably, we opted for a Dynamic In-Context Learning (Few-Shot Prompting) architecture.
 
-Por que não Fine-Tuning Tradicional?
+Why Not Traditional Fine-Tuning?
 
-O Fine-Tuning estático (SFT) "congela" o conhecimento do modelo. Em segurança cibernética, onde novos serviços de nuvem surgem mensalmente, um modelo SFT ficaria obsoleto rapidamente.
+Static Fine-Tuning (SFT) "freezes" the model's knowledge. In cybersecurity, where new cloud services emerge monthly, an SFT model would rapidly become obsolete.
 
-A Abordagem "In-Context"
+The "In-Context" Approach
 
-Utilizamos um dataset curado (dataset_treino.json) que é injetado dinamicamente no contexto do modelo Gemini 2.5 Flash em tempo de execução.
+We utilize a curated dataset (`dataset_treino.json`) that is dynamically injected into the Gemini 2.5 Flash model's context at runtime.
 
-Dataset JSON: Contém pares de Diagrama -> Análise Ideal (Golden Master).
+JSON Dataset: Contains Diagram -> Ideal Analysis (Golden Master) pairs.
 
-Injeção: O sistema instrui a IA a usar esse dataset como "memória de referência".
+Injection: The system instructs the AI to use this dataset as a "reference memory."
 
-Resultado: O modelo aprende o padrão de análise esperado (One-Shot/Few-Shot) sem a necessidade de re-treinamento pesado, garantindo flexibilidade e baixo custo.
+Result: The model learns the expected analysis pattern (One-Shot/Few-Shot) without requiring heavy retraining, ensuring flexibility and low operational costs.
 
-📂 Estrutura do Dataset
+📂 Dataset Structure
 
-O arquivo dataset_treino.json foi construído utilizando uma técnica de Teacher-Student, onde um modelo maior auxiliou na anotação de diagramas reais da AWS e Azure.
+The `dataset_treino.json` file was built using a Teacher-Student technique, where a larger model assisted in annotating real AWS and Azure diagrams.
 
-Exemplo de estrutura de anotação:
-```
+Annotation structure example:
+```json
 {
     "description": "Architecture with AWS WAF and CloudFront...",
     "stride_analysis": {
@@ -84,45 +81,32 @@ Exemplo de estrutura de anotação:
 }
 ```
 
-#
-#
-#
 
-## 🛠️ Como Executar
+## 🛠️ How to Run
 
-<img src="https://raw.githubusercontent.com/ErickMBarreto/HackatonFiap/refs/heads/main/assets/4.png">
+1. Clone this repository or download the files.
+2. Open the notebook `AiSecurityEngine.ipynb` in Google Colab.
+3. Upload the file `dataset/dataset_treino.json` to the root directory of your Colab workspace.
+4. Run the cells sequentially. If you haven't uploaded the JSON file manually, the first cell will automatically download `dataset_treino.json`.
+5. Enter your Google AI Studio API Key when prompted.
 
+#### Note Regardless of the Method Used:
 
-1. Clone este repositório ou baixe os arquivos.
+> The Google AI Studio API Key does not need to be on a paid plan; Google provides a free tier that is sufficient to run this application, provided you do not exceed the free usage limits:
 
-2. Abra o notebook [AiSecurityEngine.ipynb] no Google Colab.
+Gemini 2.5 Flash Model:
 
-3. Faça o upload do arquivo [dataset/dataset_treino.json] para a raiz do Colab.
+* Maximum Requests Per Minute (RPM) = 5
+* Maximum Input Tokens Per Minute (TPM) = 250K
+* Maximum Requests Per Day (RPD) = 20
 
-4. Execute as células sequencialmente. Caso não tenha feito o upload do json, a primeira célula baixará o arquivo [dataset_treino.json]
+> This was verified on 01/23/2026.
 
-5. Insira sua Google AI Studio API Key quando solicitado.
+> Just make sure to create an API key and use it within the current free limits.
 
-#### Observação Independente do Método Usado:
-> A Google AI Studio API Key, não precisa ser em um plano pago; a Google disponibiliza uma utilização gratuita o suficiente para executar esta aplicação, desde que você não ultrapasse os limites gratuitos de utilização:
+#### AI Security Engine Output
 
-Modelo gemini-2.5-flash:
+> A PDF report is made available after completing these steps:
 
-* Máximo de solicitações por minuto (RPM) = 5.
-* Máximo de tokens de entrada por minuto (TPM) = 250K.
-* Máximo de solicitações por dia (RPD) = 20.
- 
-> Isso foi verificado em 23/01/2026.
-
-> Apenas atente que você tem que criar uma api-key e usá-la aqui dentros dos limites gratuitos vigentes.
-
-#### Saída do Ai Security Engine
-
-> Um relatório em formato PDF é disponibilizado após:
-
-1. Clicar no botão [Selecionar Diagrama] e escolher seu aruqivo de análise (imagem). 
-2. Clicar no botão [INICIAR ANÁLISE ESTRATÉGICA], aguardar o processamento e clicar no botão [Download PDF] que aparece no fim do processo.
-
-<img src="https://raw.githubusercontent.com/ErickMBarreto/HackatonFiap/refs/heads/main/assets/report.png">
-
-
+1. Click the `[Selecionar Diagrama]` (Select Diagram) button and choose your analysis file (image).
+2. Click the `[INICIAR ANÁLISE ESTRATÉGICA]` (Start Strategic Analysis) button, wait for processing, and click the `[Download PDF]` button that appears at the end of the process.
